@@ -1,3 +1,33 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="welcome_text_size">25sp</dimen>
+    <dimen name="user_name_text_size">17sp</dimen>
+    <dimen name="network_status_text_size">16sp</dimen>
+    <dimen name="today_log_title_size">22sp</dimen>
+    <dimen name="today_log_labels_size">17sp</dimen>
+    <dimen name="today_log_data_size">15sp</dimen>
+    <dimen name="total_working_hours_title_size">22sp</dimen>
+    <dimen name="total_working_hours_text_size">17sp</dimen>
+    <dimen name="date_text_size">13sp</dimen>
+    <dimen name="welcome_marginTop">8dp</dimen>
+    <dimen name="userName_marginStart">32dp</dimen>
+    <dimen name="userName_marginEnd">184dp</dimen>
+    <dimen name="checkedInLabel_marginTop">24dp</dimen>
+    <dimen name="checkedInLabel_marginStart">4dp</dimen>
+    <dimen name="arrivedLabel_marginStart">8dp</dimen>
+    <dimen name="arrivedLabel_marginTop">12dp</dimen>
+    <dimen name="checkedOutLabel_marginStart">16dp</dimen>
+    <dimen name="myNetwork_marginStart">0dp</dimen>
+    <dimen name="myNetwork_marginEnd">8dp</dimen>
+    <dimen name="CheckedIn_marginStart">8dp</dimen>
+    <dimen name="CheckedIn_marginEnd">8dp</dimen>
+    <dimen name="todayLogTitle_width">0dp</dimen>
+    <dimen name="todayLogTitle_height">32dp</dimen>
+    <dimen name="todayLogTitle_marginTop">50dp</dimen>
+    <dimen name="totalWorkingHoursTitle_width">0dp</dimen>
+    <dimen name="totalWorkingHoursTitle_marginTop">132dp</dimen>
+    <dimen name="totalWorkingHoursTitle_marginStart">8dp</dimen>
+    <dimen name="totalWorkingHoursTitle_marginEnd">8dp</dimen>
+
+
 </resources>

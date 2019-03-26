@@ -9,212 +9,122 @@
 
     <TextView
         android:id="@+id/welcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Welcome"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="25sp"
-        android:textStyle="bold"
+        style="@style/WelcomeTitle"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginEnd="184dp"
-        android:layout_marginRight="184dp"
-        android:text='"User Name"'
+        style="@style/MyUser"
         app:layout_constraintBaseline_toBaselineOf="@+id/welcome"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.846"
-        app:layout_constraintStart_toEndOf="@+id/barrier2" />
+        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintStart_toEndOf="@+id/barrier2"
+        tools:text="name" />
 
     <TextView
         android:id="@+id/text_wifi_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="TextView"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/welcome" />
-
-    <TextView
-        android:id="@+id/checked_in"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="28dp"
-        android:text="Ckecked in:"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/textView15" />
-
-    <TextView
-        android:id="@+id/arrived_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="12dp"
-        android:text="Arrived at:"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/checked_in" />
-
-    <TextView
-        android:id="@+id/checked_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="Ckecked out:"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txt_checked_in"
-        app:layout_constraintStart_toStartOf="@+id/guideline2" />
-
-    <TextView
-        android:id="@+id/left_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="Left at:"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txt_arrived_at"
-        app:layout_constraintStart_toStartOf="@+id/guideline2" />
-
-    <TextView
-        android:id="@+id/txt_checked_in"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="No"
-        app:layout_constraintBaseline_toBaselineOf="@+id/checked_in"
-        app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toEndOf="@+id/checked_in" />
-
-    <TextView
-        android:id="@+id/txt_arrived_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="-"
-        app:layout_constraintBaseline_toBaselineOf="@+id/arrived_at"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintHorizontal_bias="0.544"
-        app:layout_constraintStart_toEndOf="@+id/arrived_at" />
-
-    <TextView
-        android:id="@+id/txt_checked_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="No"
-        app:layout_constraintBaseline_toBaselineOf="@+id/checked_out"
+        style="@style/MyUser.MyNetwork"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toEndOf="@+id/checked_out" />
-
-    <TextView
-        android:id="@+id/txt_left_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="-"
-        app:layout_constraintBaseline_toBaselineOf="@+id/left_at"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintStart_toEndOf="@+id/left_at" />
-
-    <TextView
-        android:id="@+id/total_whours"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:gravity="center_vertical"
-        android:text="Total working hours"
-        android:textAlignment="center"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/arrived_at" />
-
-    <TextView
-        android:id="@+id/text_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text='"Date"'
-        android:textSize="12sp"
-        android:textStyle="italic"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/total_whours" />
-
-    <TextView
-        android:id="@+id/txt_total_working_hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/text_date" />
+        app:layout_constraintTop_toBottomOf="@+id/welcome"
+        tools:text="workplace wifi status" />
 
     <TextView
         android:id="@+id/textView15"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="76dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center_vertical"
-        android:text="Today's Log"
-        android:textAlignment="center"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="22sp"
-        android:textStyle="bold"
+        style="@style/TodayLogTitle"
         app:layout_constraintBottom_toTopOf="@+id/checked_out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_wifi_status"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/checked_in"
+        style="@style/WelcomeTitle.CheckedInLabel"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+    <TextView
+        android:id="@+id/arrived_at"
+        style="@style/WelcomeTitle.CheckedInLabel.ArrivedLabel"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/checked_in" />
+
+    <TextView
+        android:id="@+id/checked_out"
+        style="@style/WelcomeTitle.CheckedInLabel.CheckedOutLabel"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txt_checked_in"
+        app:layout_constraintStart_toStartOf="@+id/guideline2" />
+
+    <TextView
+        android:id="@+id/left_at"
+        style="@style/WelcomeTitle.CheckedInLabel.CheckedOutLabel.LeftAtLabel"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txt_arrived_at"
+        app:layout_constraintStart_toStartOf="@+id/guideline2" />
+
+    <TextView
+        android:id="@+id/txt_checked_in"
+        style="@style/MyUser.CheckedIn"
+        app:layout_constraintBaseline_toBaselineOf="@+id/checked_in"
+        app:layout_constraintDimensionRatio="h,1:1"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toEndOf="@+id/checked_in"
+        tools:text="No" />
+
+    <TextView
+        android:id="@+id/txt_arrived_at"
+        style="@style/MyUser.CheckedIn.ArrivedAt"
+        app:layout_constraintBaseline_toBaselineOf="@+id/arrived_at"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.544"
+        app:layout_constraintStart_toEndOf="@+id/arrived_at"
+        tools:text="-" />
+
+    <TextView
+        android:id="@+id/txt_checked_out"
+        style="@style/MyUser.CheckedIn.CheckedOut"
+        app:layout_constraintBaseline_toBaselineOf="@+id/checked_out"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toEndOf="@+id/checked_out"
+        tools:text="No" />
+
+    <TextView
+        android:id="@+id/txt_left_at"
+        style="@style/MyUser.CheckedIn.LeftAt"
+        app:layout_constraintBaseline_toBaselineOf="@+id/left_at"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toEndOf="@+id/left_at"
+        tools:text="-" />
+
+    <TextView
+        android:id="@+id/total_work_hours"
+        style="@style/TodayLogTitle.TotalWorkingHoursTitle"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/arrived_at" />
+
+    <TextView
+        android:id="@+id/text_date"
+        style="@style/MyUser.CheckedIn.MyDate"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/total_work_hours"
+        tools:text='Date' />
+
+    <TextView
+        android:id="@+id/txt_total_working_hours"
+        style="@style/MyUser.CheckedIn.TotalWorkingHours"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/text_date"
+        tools:text="-h" />
+
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -237,39 +147,33 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.96" />
 
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="end"
-        app:constraint_referenced_ids="welcome"
-        tools:layout_editor_absoluteX="411dp" />
 
     <android.support.constraint.Group
         android:id="@+id/group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="left_at,txt_left_at,total_whours,text_date,txt_total_working_hours" />
+        app:constraint_referenced_ids="left_at,txt_left_at,total_work_hours,text_date,txt_total_working_hours" />
 
     <android.support.constraint.Group
         android:id="@+id/group2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/MyGroup"
         android:visibility="visible"
         app:constraint_referenced_ids="txt_checked_out,checked_out" />
 
     <android.support.constraint.Group
         android:id="@+id/group4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginEnd="411dp"
-        android:layout_marginRight="411dp"
+        style="@style/MyGroup.ThirdGroup"
+        android:visibility="visible"
         app:constraint_referenced_ids="txt_arrived_at,txt_checked_in,checked_in,arrived_at"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
+    <android.support.constraint.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="welcome"
+        tools:layout_editor_absoluteX="411dp" />
 </android.support.constraint.ConstraintLayout>

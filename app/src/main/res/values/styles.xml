@@ -6,6 +6,129 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
     </style>
+
+
+    <style name="WelcomeTitle">
+        <item name="android:text">@string/welcome</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/welcome_marginTop</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/welcome_text_size</item>
+        <item name="android:textColor">@color/design_default_color_primary_dark</item>
+
+    </style>
+
+    <style name="WelcomeTitle.CheckedInLabel">
+        <item name="android:layout_marginTop">@dimen/checkedInLabel_marginTop</item>
+        <item name="android:layout_marginStart">@dimen/checkedInLabel_marginStart</item>
+        <item name="android:text">@string/checked_in</item>
+        <item name="android:textSize">@dimen/today_log_labels_size</item>
+
+    </style>
+
+    <style name="WelcomeTitle.CheckedInLabel.ArrivedLabel">
+        <item name="android:layout_marginStart">@dimen/arrivedLabel_marginStart</item>
+        <item name="android:layout_marginTop">@dimen/arrivedLabel_marginTop</item>
+        <item name="android:text">@string/arrived_at</item>
+
+    </style>
+
+    <style name="WelcomeTitle.CheckedInLabel.CheckedOutLabel">
+        <item name="android:layout_marginStart">@dimen/checkedOutLabel_marginStart</item>
+        <item name="android:text">@string/checked_out</item>
+
+    </style>
+
+    <style name="WelcomeTitle.CheckedInLabel.CheckedOutLabel.LeftAtLabel">
+        <item name="android:text">@string/left_at</item>
+
+    </style>
+
+    <style name="MyUser">
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/userName_marginStart</item>
+        <item name="android:layout_marginEnd">@dimen/userName_marginEnd</item>
+        <item name="android:textSize">@dimen/user_name_text_size</item>
+
+
+    </style>
+
+    <style name="MyUser.MyNetwork">
+        <item name="android:textSize">@dimen/network_status_text_size</item>
+        <item name="android:layout_marginStart">@dimen/myNetwork_marginStart</item>
+        <item name="android:layout_marginEnd">@dimen/myNetwork_marginEnd</item>
+
+
+    </style>
+
+    <style name="MyUser.CheckedIn">
+        <item name="android:textSize">@dimen/today_log_data_size</item>
+        <item name="android:layout_marginStart">@dimen/CheckedIn_marginStart</item>
+        <item name="android:layout_marginEnd">@dimen/CheckedIn_marginEnd</item>
+
+    </style>
+
+    <style name="MyUser.CheckedIn.ArrivedAt"></style>
+
+    <style name="MyUser.CheckedIn.CheckedOut"></style>
+
+    <style name="MyUser.CheckedIn.LeftAt"></style>
+
+    <style name="MyUser.CheckedIn.TotalWorkingHours">
+        <item name="android:textSize">@dimen/total_working_hours_text_size</item>
+
+    </style>
+
+    <style name="MyUser.CheckedIn.MyDate">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">@dimen/date_text_size</item>
+
+    </style>
+
+    <style name="TodayLogTitle">
+        <item name="android:layout_width">@dimen/todayLogTitle_width</item>
+        <item name="android:layout_height">@dimen/todayLogTitle_height</item>
+        <item name="android:layout_marginTop">@dimen/todayLogTitle_marginTop</item>
+        <item name="android:text">@string/today_s_log</item>
+        <item name="android:textColor">@color/design_default_color_primary_dark</item>
+        <item name="android:background">@color/colorTitlesBackground</item>
+        <item name="android:textSize">@dimen/today_log_title_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center_vertical</item>
+
+    </style>
+
+    <style name="TodayLogTitle.TotalWorkingHoursTitle">
+        <item name="android:layout_width">@dimen/totalWorkingHoursTitle_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/totalWorkingHoursTitle_marginTop</item>
+        <item name="android:layout_marginStart">@dimen/totalWorkingHoursTitle_marginStart</item>
+        <item name="android:layout_marginEnd">@dimen/totalWorkingHoursTitle_marginEnd</item>
+        <item name="android:text">@string/total_working_hours</item>
+        <item name="android:textSize">@dimen/total_working_hours_title_size</item>
+
+    </style>
+
+    <style name="MyGroup">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
+    <style name="MyGroup.ThirdGroup">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">50dp</item>
+        <item name="android:layout_marginEnd">411dp</item>
+
+
+    </style>
+
 
 </resources>
