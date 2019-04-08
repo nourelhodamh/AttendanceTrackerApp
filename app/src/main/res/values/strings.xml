@@ -7,4 +7,5 @@
     <string name="left_at">Left at:</string>
     <string name="total_working_hours">Total working hours</string>
     <string name="today_s_log">Today\'s Log</string>
+    <string name="button">Button</string>
 </resources>
