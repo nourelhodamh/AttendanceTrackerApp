@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Attendance Tracker</string>
+
+    <!-- TextViews Text -->
     <string name="welcome">Welcome</string>
     <string name="checked_in">Checked in:</string>
     <string name="arrived_at">Arrived at:</string>
@@ -7,5 +9,5 @@
     <string name="left_at">Left at:</string>
     <string name="total_working_hours">Total working hours</string>
     <string name="today_s_log">Today\'s Log</string>
-    <string name="button">Button</string>
+
 </resources>
