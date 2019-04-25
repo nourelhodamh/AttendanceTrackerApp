@@ -8,20 +8,19 @@ import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.example.attendancetracker.Utils;
+import com.example.attendancetracker.R;
+import com.example.attendancetracker.UserData;
+import com.google.firebase.database.ServerValue;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.example.attendancetracker.Utils.WORK_NETWORK;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
-
-    private ConnectionCallback connectionCallback;
-
-    public NetworkChangeReceiver(ConnectionCallback callback) {
-        super();
-        this.connectionCallback = callback;
-
-    }
-
 
     private String mWifiName;
     String ssid = "none";
@@ -32,24 +31,35 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     private static WifiManager wifiManager;
     public static WifiInfo wifiInfo;
 
+    private ConnectionCallback connectionCallback;
 
-    private Utils utils = new Utils();
+    public NetworkChangeReceiver(ConnectionCallback callback) {
+        super();
+        this.connectionCallback = callback;
+
+    }
+
+    public NetworkChangeReceiver() {
+
+    }
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         isConnectedToRequiredWifi(context);
-        connectionCallback.isWorking(isConnectedToRequiredWifi(context));
-
+        connectionCallback.updateUICallback(isConnectedToRequiredWifi(context), trackingTimeOne());
     }
 
     public int isConnectedToRequiredWifi(Context context) {
-         mWifiName = returnWifiName(context).replaceAll("^\"|\"$", "");
+        mWifiName = returnWifiName(context).replaceAll("^\"|\"$", "");
         if (isOnline(context)) {
             if (check(mWifiName)) {
-                Toast.makeText(context, "Connected to Database", Toast.LENGTH_LONG).show();
+                trackingTimeOne();
+                Toast.makeText(context, context.getString(R.string.connected_to_database), Toast.LENGTH_LONG).show();
                 return 1;
             } else if (isOnline(context) && !(check(mWifiName))) {
+
                 Toast.makeText(context, "Disconnected of Database", Toast.LENGTH_LONG).show();
                 return 0;
             }
@@ -59,6 +69,14 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         }
         return 2;
     }
+
+
+    public Map trackingTimeOne() {
+        Map map = new HashMap();
+        map.put("Time", ServerValue.TIMESTAMP);
+        return map;
+    }
+
 
     private boolean isOnline(Context context) {
         conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -71,7 +89,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
 
     private boolean check(String mWifiName) {
-        if (mWifiName.equals(utils.WORK_NETWORK)) {
+        if (mWifiName.equals(WORK_NETWORK)) {
             return true;
         } else {
             return false;

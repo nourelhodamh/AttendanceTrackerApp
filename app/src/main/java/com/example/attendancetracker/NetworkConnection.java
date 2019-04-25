@@ -7,10 +7,10 @@ import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
+import static com.example.attendancetracker.Utils.WORK_NETWORK;
+
 public class NetworkConnection {
 
-
-    Utils utils= new Utils();
 
 
     private static  ConnectivityManager connMgr;
@@ -27,6 +27,8 @@ public class NetworkConnection {
     /**
      * Function returns if wifi is connected to workplace network or not
      */
+
+
 
     public int networkStatus(Context context) {
         connMgr = (ConnectivityManager)
@@ -48,10 +50,10 @@ public class NetworkConnection {
             mWifiName = ssid.replaceAll("^\"|\"$", "");
 
 
-            if (mWifiName.equals(utils.WORK_NETWORK)) {
+            if (mWifiName.equals(WORK_NETWORK)) {
                 return flag=1;
 
-            } else if (activeInfo.isConnected() && !(mWifiName.equals(utils.WORK_NETWORK))) {
+            } else if (activeInfo.isConnected() && !(mWifiName.equals(WORK_NETWORK))) {
                 return flag=0;
 
             }

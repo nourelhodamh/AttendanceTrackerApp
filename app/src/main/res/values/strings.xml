@@ -9,5 +9,6 @@
     <string name="left_at">Left at:</string>
     <string name="total_working_hours">Total working hours</string>
     <string name="today_s_log">Today\'s Log</string>
+    <string name="connected_to_database">Connected to Database</string>
 
 </resources>

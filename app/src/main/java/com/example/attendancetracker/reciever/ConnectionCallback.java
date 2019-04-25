@@ -1,5 +1,7 @@
 package com.example.attendancetracker.reciever;
 
+import java.util.Map;
+
 public interface ConnectionCallback{
-    public void isWorking(int works);
+    public void updateUICallback(int works, Map uTime);
 }
