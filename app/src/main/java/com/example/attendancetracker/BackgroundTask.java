@@ -18,7 +18,7 @@ public class BackgroundTask extends AsyncTask<Integer, Long, Integer> {
     NetworkChangeReceiver networkReceiver;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
-    Map map;
+    private Map mMap;
     String userId;
     private Context mContext;
     private int mflag;
@@ -33,8 +33,9 @@ public class BackgroundTask extends AsyncTask<Integer, Long, Integer> {
     protected Integer doInBackground(Integer... integers) {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference("Async");
-        mDatabaseReference.setValue("BackGroundTask");
-
+        //mDatabaseReference.setValue("BackGroundTask");
+        getTimeStamp();
+        createUserData(mMap, mMap);
 //        mflag = integers[i];
 //        if (mflag == 1) {
 //            mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -59,12 +60,12 @@ public class BackgroundTask extends AsyncTask<Integer, Long, Integer> {
     protected void onPostExecute(Integer integer) {
         super.onPostExecute(integer);
         Toast.makeText(mContext, "PostExecute", Toast.LENGTH_LONG).show();
-        createUserData(map, map);
+        // createUserData(map, map);
     }
 
     private void getTimeStamp() {
-        map = new HashMap();
-        map.put("Time", ServerValue.TIMESTAMP);
+        mMap = new HashMap();
+        mMap.put("Time", ServerValue.TIMESTAMP);
     }
 
     private String getUserId() {

@@ -1,5 +1,8 @@
 package com.example.attendancetracker.activities;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.attendancetracker.BackgroundTask;
+import com.example.attendancetracker.MJobScheduler;
 import com.example.attendancetracker.NetworkConnection;
 import com.example.attendancetracker.R;
 import com.example.attendancetracker.UserData;
@@ -50,11 +54,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     private NetworkChangeReceiver receiver; // The BroadcastReceiver that tracks network connectivity changes.
 
-
     public Map map;
 
     public String userId;
 
+    private static final int JOB_ID = 101;
+    private JobScheduler jobScheduler;
+    private JobInfo jobInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,23 +73,31 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         mCheckedOut = findViewById(R.id.txt_checked_out);
         mLeftAt = findViewById(R.id.txt_left_at);
         mDate = findViewById(R.id.text_date);
-
-        //a reference to your firebase node
+//a reference to your firebase node
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
-
-
 //get date
         getDate();
 //Resources
         resources();
-
-//        updateUI(mFlag);
+//updateUI(mFlag);
         networkConnection= new NetworkConnection();
         mAsyncFlag= networkConnection.networkStatus(this);
 //AsyncTAsk
         BackgroundTask backgroundTask= new BackgroundTask(this);
         backgroundTask.execute(mAsyncFlag);
+//JobService
+        ComponentName serviceComponent= new ComponentName(this, MJobScheduler.class);
+        JobInfo.Builder builder= new JobInfo.Builder(JOB_ID,serviceComponent);
+
+        builder.setPeriodic(6000);
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
+        builder.setPersisted(true);
+
+        jobInfo=builder.build();
+        jobScheduler= (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
+        Toast.makeText(getApplicationContext(), "JobScheduler", Toast.LENGTH_SHORT).show();
 
 
     }

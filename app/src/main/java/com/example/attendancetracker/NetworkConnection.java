@@ -24,12 +24,10 @@ public class NetworkConnection {
         super();
     }
 
+
     /**
      * Function returns if wifi is connected to workplace network or not
      */
-
-
-
     public int networkStatus(Context context) {
         connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
