@@ -1,19 +1,25 @@
 package com.example.attendancetracker.activities;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-
 import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.support.v7.app.AppCompatActivity;
-
+import android.text.TextUtils;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.attendancetracker.BackgroundTask;
+import com.example.attendancetracker.MJobScheduler;
 import com.example.attendancetracker.NetworkConnection;
 import com.example.attendancetracker.R;
+import com.example.attendancetracker.UserData;
 import com.example.attendancetracker.reciever.ConnectionCallback;
 import com.example.attendancetracker.reciever.NetworkChangeReceiver;
 import com.google.firebase.database.DatabaseReference;
@@ -37,59 +43,87 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private int mDisconnectedColor;
 
     private int mFlag = 2;
+    int mAsyncFlag;
 
-    FirebaseDatabase database;
-    DatabaseReference myRef;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
 
+    private NetworkConnection networkConnection;
 
-    // The BroadcastReceiver that tracks network connectivity changes.
-    private NetworkChangeReceiver receiver = new NetworkChangeReceiver(this);
+    private Resources mRes;
 
+    private NetworkChangeReceiver receiver; // The BroadcastReceiver that tracks network connectivity changes.
+
+    public Map map;
+
+    public String userId;
+
+    private static final int JOB_ID = 101;
+    private JobScheduler jobScheduler;
+    private JobInfo jobInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //views
+//TextViews
         mWifiStatuses = findViewById(R.id.text_wifi_status);
         mCheckedIn = findViewById(R.id.txt_checked_in);
         mCheckedOut = findViewById(R.id.txt_checked_out);
         mLeftAt = findViewById(R.id.txt_left_at);
         mDate = findViewById(R.id.text_date);
-
-
-// custom colors
-        Resources res = getResources();
-        mConnectedColor = res.getColor(R.color.colorGreen);
-        mDisconnectedColor = res.getColor(R.color.colorRed);
-
-//network
-        NetworkConnection networkConnection = new NetworkConnection();
-        mFlag = networkConnection.networkStatus(this);
-        updateUI(mFlag);
-
+//a reference to your firebase node
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = mFirebaseDatabase.getReference();
 //get date
         getDate();
+//Resources
+        resources();
+//updateUI(mFlag);
+        networkConnection= new NetworkConnection();
+        mAsyncFlag= networkConnection.networkStatus(this);
+//AsyncTAsk
+        BackgroundTask backgroundTask= new BackgroundTask(this);
+        backgroundTask.execute(mAsyncFlag);
+//JobService
+        ComponentName serviceComponent= new ComponentName(this, MJobScheduler.class);
+        JobInfo.Builder builder= new JobInfo.Builder(JOB_ID,serviceComponent);
 
-//Connecting to FirebaseDatabase
-        database = FirebaseDatabase.getInstance();
+        builder.setPeriodic(6000);
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
+        builder.setPersisted(true);
 
-//get reference to Arriving Node
-        myRef = database.getReference("Arriving");
-        myRef.child("Status").setValue("Yes");
-
-//get reference to Departure Node
-        myRef = database.getReference("Departure");
-        myRef.child("Status").setValue("No");
-
-//Saving timeStamp of arrival to FirebaseDatabase
-        Map map = new HashMap();
-        map.put("Time Stamp", ServerValue.TIMESTAMP);
-        myRef.child("Time of Arrival").updateChildren(map);
+        jobInfo=builder.build();
+        jobScheduler= (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
+        Toast.makeText(getApplicationContext(), "JobScheduler", Toast.LENGTH_SHORT).show();
 
 
     }
+
+
+
+    private void getTimeStamp() {
+        map = new HashMap();
+        map.put("Time", ServerValue.TIMESTAMP);
+    }
+
+    private String getUserId(){
+        if (TextUtils.isEmpty(userId)) {
+            userId = mDatabaseReference.push().getKey();
+        }
+        return userId;
+    }
+
+    private void createUserData(Map arrivalTime, Map departureTime) {
+        UserData userTimeData = new UserData(arrivalTime, departureTime);
+        mDatabaseReference.child(getUserId()).setValue(userTimeData);
+    }
+
+
+
+
 
 
     @Override
@@ -111,6 +145,12 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     }
 
+    private void resources() {
+        mRes = getResources();
+        mConnectedColor = mRes.getColor(R.color.colorGreen);
+        mDisconnectedColor = mRes.getColor(R.color.colorRed);
+    }
+
     private void getDate() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sDfr = new SimpleDateFormat("yyyy. MM. dd ");
@@ -119,8 +159,11 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         mDate.setTextColor(Color.BLUE);
     }
 
+
     @Override
-    public void isWorking(int works) {
+    public void updateUICallback(int works, Map uTime) {
+        createUserData(uTime, uTime);
+
         switch (works) {
             case 1:
                 updateUI(1);
@@ -130,10 +173,11 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 break;
             case 2:
                 updateUI(2);
+                break;
             default:
-                Toast.makeText(getApplicationContext(), "ON Resume: Default", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Callback check: Default", Toast.LENGTH_LONG).show();
         }
-        Toast.makeText(getApplicationContext(), "CallBAck" + works, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Callback:" + works, Toast.LENGTH_LONG).show();
 
     }
 
@@ -168,59 +212,25 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
     }
 
+    /*** User data change listener**/
+//    private void dataChangeListener() {
+//
+//        mDatabaseReference.child(userId).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                UserData userData = dataSnapshot.getValue(UserData.class);
+//                // Display newly updated name and button status
+//
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Toast.makeText(getApplicationContext(), "Add Error", Toast.LENGTH_LONG).show();
+//            }
+//        });
+//
+//    }
 
-   /* public void networkStatus() {
-        connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        activeInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (activeInfo != null && activeInfo.isConnected()) {
-
-            mWifiName = returnWifiName().replaceAll("^\"|\"$", "");
-
-            Toast.makeText(getApplicationContext(), "wifi connected ", Toast.LENGTH_LONG).show();
-            Toast.makeText(getApplicationContext(), "connected to" + mWifiName, Toast.LENGTH_LONG).show();
-
-            if (mWifiName.equals(mWorkNetwork)) {
-                mFlag = 1;
-                updateUI(mFlag);
-
-            } else if (activeInfo.isConnected() && !(mWifiName.equals(mWorkNetwork))) {
-                mFlag = 0;
-                updateUI(mFlag);
-                Toast.makeText(getApplicationContext(), "You are not connected to your workplace WI-FI",
-                        Toast.LENGTH_LONG).show();
-            }
-        } else {
-            mFlag = 2;
-            updateUI(mFlag);
-            Toast.makeText(getApplicationContext(), "Lost Connection-Open Your Wifi",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private String returnWifiName() {
-        String ssid = "none";
-        WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
-            ssid = wifiInfo.getSSID();
-        }
-        return ssid;
-    }
-
-
-
-    private void receiverUpdateUI() {
-        if (receiver.isWifiConnected() == 1) {
-            updateUI(1);
-        } else if (receiver.isWifiConnected() == 0) {
-            updateUI(0);
-        } else if (receiver.isWifiConnected() == 2) {
-            updateUI(2);
-        }
-    }*/
 }
-
-
-
