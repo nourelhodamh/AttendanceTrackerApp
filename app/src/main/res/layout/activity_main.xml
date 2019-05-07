@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <TextView
         android:id="@+id/welcome"
@@ -176,4 +176,7 @@
         app:barrierDirection="end"
         app:constraint_referenced_ids="welcome"
         tools:layout_editor_absoluteX="411dp" />
+
+
+
 </android.support.constraint.ConstraintLayout>

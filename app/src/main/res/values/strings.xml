@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Attendance Tracker</string>
+
+    <!-- TextViews Text -->
     <string name="welcome">Welcome</string>
     <string name="checked_in">Checked in:</string>
     <string name="arrived_at">Arrived at:</string>
@@ -7,4 +9,12 @@
     <string name="left_at">Left at:</string>
     <string name="total_working_hours">Total working hours</string>
     <string name="today_s_log">Today\'s Log</string>
+    <string name="msg_connected">Connected to Database</string>
+    <string name="msg_disconnected">Disconnected of Database</string>
+    <string name="msg_wifi_closed">Open your WI-FI</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="log_me_in">Login</string>
+    <string name="sign_in">Sign In</string>
+
 </resources>
