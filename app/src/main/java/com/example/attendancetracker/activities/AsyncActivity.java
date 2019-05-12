@@ -37,8 +37,8 @@ public class AsyncActivity extends AppCompatActivity {
 
         mUserId = bundle.getString("UserId");
 
-        BackgroundTask backgroundTask= new BackgroundTask(this);
-        backgroundTask.execute();
+//        BackgroundTask backgroundTask= new BackgroundTask(this);
+//        backgroundTask.execute();
 
     }
 

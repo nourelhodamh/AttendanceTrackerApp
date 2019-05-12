@@ -3,6 +3,7 @@ package com.example.attendancetracker.activities;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -11,16 +12,19 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.attendancetracker.BackgroundTask;
-import com.example.attendancetracker.R;
-import com.example.attendancetracker.scheduler.MJobScheduler;
 import com.example.attendancetracker.NetworkConnection;
-import com.example.attendancetracker.scheduler.UserData;
+import com.example.attendancetracker.R;
 import com.example.attendancetracker.reciever.ConnectionCallback;
 import com.example.attendancetracker.reciever.NetworkChangeReceiver;
+import com.example.attendancetracker.scheduler.MJobScheduler;
+import com.example.attendancetracker.scheduler.UserData;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -30,6 +34,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.attendancetracker.Utils.displayToast;
+
 public class MainActivity extends AppCompatActivity implements ConnectionCallback {
 
     private TextView mDate;
@@ -37,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private TextView mCheckedOut;
     private TextView mCheckedIn;
     private TextView mLeftAt;
+    private TextView mUserName;
+    private Button mLogoutButton;
 
     private int mConnectedColor;
     private int mDisconnectedColor;
@@ -46,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
+    private FirebaseAuth mAuth;
 
     private NetworkConnection networkConnection;
 
@@ -69,6 +78,15 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         //views
         initializeUI();
 
+//        //get current user Info
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        if (user != null) {
+//            String email = user.getEmail();
+//            // Check if user's email is verified
+//            boolean emailVerified = user.isEmailVerified();
+//            String uid = user.getUid();
+//        }
+
         //Resources
         resources();
 
@@ -83,12 +101,22 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         networkConnection = new NetworkConnection();
         mAsyncFlag = networkConnection.networkStatus(this);
 
-        //AsyncTAsk
-        //startAsyncTAsk();
 
         //JobService
         startJobService();
-         Toast.makeText(getApplicationContext(), "JobScheduler-MainActivity", Toast.LENGTH_SHORT).show();
+        displayToast(MainActivity.this, "JobScheduler-MainActivity");
+
+
+        mLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mAuth.getInstance().signOut();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
+
 
         //updateUI(mFlag);
 
@@ -121,6 +149,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         mCheckedOut = findViewById(R.id.txt_checked_out);
         mLeftAt = findViewById(R.id.txt_left_at);
         mDate = findViewById(R.id.text_date);
+        mLogoutButton = findViewById(R.id.btn_logout);
+        mUserName = findViewById(R.id.text_user_name);
     }
 
     private void resources() {
@@ -138,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     }
 
     private void startAsyncTAsk() {
-        BackgroundTask backgroundTask = new BackgroundTask(this);
+        AsyncActivity.BackgroundTask backgroundTask = new AsyncActivity.BackgroundTask(this);
         backgroundTask.execute(mAsyncFlag);
     }
 
@@ -146,14 +176,14 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         ComponentName serviceComponent = new ComponentName(this, MJobScheduler.class);
         JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, serviceComponent);
 
-        builder.setPeriodic(6000);
+        builder.setPeriodic(600000000);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
         builder.setPersisted(true);
 
         jobInfo = builder.build();
         jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
-        Toast.makeText(getApplicationContext(), "JobScheduler", Toast.LENGTH_SHORT).show();
+//        displayToast(MainActivity.this,"MainActivity-JobScheduler");
 //        Log.v("MainActivity", "onCreate: JobScheduler");
     }
 
@@ -170,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     }
 
     private void createUserData(Map arrivalTime, Map departureTime) {
-        UserData user = new UserData(userId ,arrivalTime, departureTime);
+        UserData user = new UserData(userId, arrivalTime, departureTime);
         mDatabaseReference.child(getUserId()).setValue(user);
     }
 
@@ -178,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     @Override
     public void updateUICallback(int works) {
         //createUserData(uTime, uTime);
-
         switch (works) {
             case 1:
                 updateUI(1);
@@ -194,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 Toast.makeText(getApplicationContext(), "Callback check: Default", Toast.LENGTH_LONG).show();
         }
         Log.v("MainActivity", "Callback:" + works);
-         Toast.makeText(getApplicationContext(), "Callback:" + works, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Callback:" + works, Toast.LENGTH_LONG).show();
 
     }
 
@@ -229,25 +258,5 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
     }
 
-    /*** User data change listener**/
-//    private void dataChangeListener() {
-//
-//        mDatabaseReference.child(userId).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                UserData userData = dataSnapshot.getValue(UserData.class);
-//                // Display newly updated name and button status
-//
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Toast.makeText(getApplicationContext(), "Add Error", Toast.LENGTH_LONG).show();
-//            }
-//        });
-//
-//    }
 
 }

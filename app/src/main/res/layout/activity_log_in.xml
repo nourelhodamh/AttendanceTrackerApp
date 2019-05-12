@@ -6,4 +6,45 @@
     android:layout_height="match_parent"
     tools:context=".activities.LoginActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/login_txt_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:hint="Enter Email"/>
+
+        <TextView
+            android:id="@+id/login_email_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/loginActivity_email_warning"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/loginActivity_txt_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:hint="Enter Password"/>
+
+        <TextView
+            android:id="@+id/login_password_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/loginActivity_password_warning"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/login_btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/loginActivity_login" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

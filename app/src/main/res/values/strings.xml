@@ -16,5 +16,12 @@
     <string name="no">No</string>
     <string name="log_me_in">Login</string>
     <string name="sign_in">Sign In</string>
+    <string name="loginActivity_login">Login</string>
+    <string name="sign_up_activitiy_enter_your_mail_toast">Please enter your EMail!</string>
+    <string name="mainActivity_logout">Logout</string>
+    <string name="loginActivity_password_warning">This field is required!</string>
+    <string name="loginActivity_email_warning">This Field is required!</string>
+    <string name="signUp_password_warning_two">Password must be at least 8 characters</string>
+    <string name="login_password_warning_two">Password must be at least 8 characters</string>
 
 </resources>

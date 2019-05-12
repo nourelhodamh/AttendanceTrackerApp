@@ -16,7 +16,7 @@ public class NetworkConnection {
     private static  ConnectivityManager connMgr;
     public static NetworkInfo activeInfo;
 
-    private String ssid = "none";
+    private String ssid="none" ;
     private String mWifiName;
     public int flag;
 

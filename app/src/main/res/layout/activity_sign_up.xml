@@ -6,34 +6,60 @@
     android:layout_height="match_parent"
     tools:context=".activities.SignUpActivity">
 
+    <ProgressBar
+        android:id="@+id/progress_Bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout" />
+
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/txt_name"
+            android:id="@+id/txt_name_signup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:hint="Name" />
+            android:hint="Name"
+            android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/txt_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textEmailAddress"
-            android:hint="Enter Email"/>
+            android:hint="Enter Email"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            android:id="@+id/txt_email_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This Field is required"
+            android:visibility="gone"/>
 
         <EditText
             android:id="@+id/txt_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPassword"
-            android:hint="Enter Password"/>
+            android:hint="Enter Password"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/txt_password_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This Field is required"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btn_signUp"
@@ -43,10 +69,13 @@
 
         <TextView
             android:id="@+id/txt_login"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
             android:text="@string/log_me_in"
-            android:clickable="true"/>
+            android:textColor="@color/colorPrimary"/>
 
     </LinearLayout>
+
+
 </android.support.constraint.ConstraintLayout>

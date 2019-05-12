@@ -19,7 +19,7 @@ public class MJobScheduler extends JobService {
                 super.onPostExecute(integer);
                 Log.v("MJobScheduler", "OnPost");
                 //Toast.makeText(getApplicationContext(), "Jobservice-OnPost", Toast.LENGTH_LONG).show();
-                jobFinished(params, false);
+                jobFinished(params, true);
             }
         };
         backgroundTask.execute();
