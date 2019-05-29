@@ -1,13 +1,16 @@
 package com.example.attendancetracker.activities;
 
 import android.app.job.JobInfo;
+import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
+import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -29,12 +32,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.example.attendancetracker.Utils.displayToast;
+import static java.text.DateFormat.getDateTimeInstance;
 
 public class MainActivity extends AppCompatActivity implements ConnectionCallback {
 
@@ -49,78 +56,66 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private int mConnectedColor;
     private int mDisconnectedColor;
 
-    private int mFlag = 2;
-    int mAsyncFlag;
-
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference;
-    private FirebaseAuth mAuth;
-
-    private NetworkConnection networkConnection;
-
     private Resources mRes;
 
     private NetworkChangeReceiver receiver; // The BroadcastReceiver that tracks network connectivity changes.
 
-    public Map map;
+    private NetworkConnection networkConnection;
 
-    public String userId;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
 
     private static final int JOB_ID = 101;
     private JobScheduler jobScheduler;
     private JobInfo jobInfo;
+
+    private int mFlag = 2;
+    private int mAsyncFlag;
+    private FirebaseAuth mAuth;
+
+
+    private final String TAG = MainActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //views
+
         initializeUI();
-
-//        //get current user Info
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (user != null) {
-//            String email = user.getEmail();
-//            // Check if user's email is verified
-//            boolean emailVerified = user.isEmailVerified();
-//            String uid = user.getUid();
-//        }
-
-        //Resources
         resources();
-
-        //get date
         getDate();
 
-        //a reference to your Firebase node
+        //Firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
 
-        //network
+        //Network
         networkConnection = new NetworkConnection();
         mAsyncFlag = networkConnection.networkStatus(this);
 
-
         //JobService
         startJobService();
-        displayToast(MainActivity.this, "JobScheduler-MainActivity");
 
-
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+        }
         mLogoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 mAuth.getInstance().signOut();
+                stopJobService();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
             }
         });
 
 
-        //updateUI(mFlag);
-
     }
+
 
     @Override
     protected void onResume() {
@@ -161,16 +156,12 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     private void getDate() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sDfr = new SimpleDateFormat("yyyy. MM. dd ");
+        SimpleDateFormat sDfr = new SimpleDateFormat("yyyy. MM. dd ", Locale.getDefault());
         String strDate = sDfr.format(calendar.getTime());
         mDate.setText(strDate);
         mDate.setTextColor(Color.BLUE);
     }
 
-    private void startAsyncTAsk() {
-        AsyncActivity.BackgroundTask backgroundTask = new AsyncActivity.BackgroundTask(this);
-        backgroundTask.execute(mAsyncFlag);
-    }
 
     private void startJobService() {
         ComponentName serviceComponent = new ComponentName(this, MJobScheduler.class);
@@ -184,24 +175,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
 //        displayToast(MainActivity.this,"MainActivity-JobScheduler");
-//        Log.v("MainActivity", "onCreate: JobScheduler");
+       Log.d("MainActivity", "onCreate: JobScheduler");
     }
 
-    private void getTimeStamp() {
-        map = new HashMap();
-        map.put("Time", ServerValue.TIMESTAMP);
-    }
 
-    private String getUserId() {
-        if (TextUtils.isEmpty(userId)) {
-            userId = mDatabaseReference.push().getKey();
-        }
-        return userId;
-    }
-
-    private void createUserData(Map arrivalTime, Map departureTime) {
-        UserData user = new UserData(userId, arrivalTime, departureTime);
-        mDatabaseReference.child(getUserId()).setValue(user);
+    private void stopJobService() {
+        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        scheduler.cancel(JOB_ID);
     }
 
 
@@ -220,10 +200,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 break;
             default:
                 Log.v("MainActivity", "\"Callback check: Default\"");
-                Toast.makeText(getApplicationContext(), "Callback check: Default", Toast.LENGTH_LONG).show();
         }
-        Log.v("MainActivity", "Callback:" + works);
-        Toast.makeText(getApplicationContext(), "Callback:" + works, Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Callback:" + works);
 
     }
 
@@ -258,5 +236,58 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
     }
 
+    //AsyncTAsk Class
+    public static class BackgroundTask extends AsyncTask<Integer, Long, Integer> {
+
+        private FirebaseDatabase mFirebaseDatabase;
+        private DatabaseReference mDatabaseReference;
+        private Map mMap;
+        String mUserId;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("BackgroundTask", "PreExecute");
+        }
+
+        @Override
+        protected Integer doInBackground(Integer... integers) {
+            mFirebaseDatabase = FirebaseDatabase.getInstance();
+            mDatabaseReference = mFirebaseDatabase.getReference("User");
+            getTimeStamp();
+            createUserData(getUserId(), mMap, mMap);
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            Log.v("BackgroundTask", "PostExecute");
+        }
+
+
+        private void createUserData(String userID, Map arrivalTime, Map departureTime) {
+            UserData user = new UserData(userID, arrivalTime, departureTime);
+            mDatabaseReference.child(userID).child("Arrival").setValue(arrivalTime);
+            mDatabaseReference.child(userID).child("Departure");
+
+        }
+
+        private void getTimeStamp() {
+            mMap = new HashMap();
+            mMap.put("Time", ServerValue.TIMESTAMP);
+
+        }
+
+        private String getUserId() {
+            if (TextUtils.isEmpty(mUserId)) {
+                mUserId = mDatabaseReference.push().getKey();
+            }
+            return mUserId;
+        }
+
+
+    }
 
 }

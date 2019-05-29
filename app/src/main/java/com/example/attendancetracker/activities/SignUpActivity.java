@@ -26,10 +26,13 @@ public class SignUpActivity extends Activity {
     private EditText mEmail;
     private EditText mPassword;
     private Button mSignIn;
+    private TextView mName;
     private TextView mLogin;
     private TextView mEmailWarning;
     private TextView mPasswordWarning;
     private ProgressBar progressBar;
+    private final String TAG = SignUpActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,19 @@ public class SignUpActivity extends Activity {
         initializeUI();
         mAuth = FirebaseAuth.getInstance();
 
+        if (mAuth.getCurrentUser() != null) {
+            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+            finish();
+        }
+
+        mSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
+                createAccount();
+
+            }
+        });
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,14 +65,7 @@ public class SignUpActivity extends Activity {
             }
         });
 
-        mSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                createAccount();
 
-            }
-        });
     }
 
     @Override
@@ -73,10 +82,16 @@ public class SignUpActivity extends Activity {
     protected void onResume() {
         super.onResume();
         progressBar.setVisibility(View.GONE);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null && mAuth.getCurrentUser().isEmailVerified()) {
+            updateUI(currentUser);
+            Log.d(TAG, "ON RESUME");
+        }
 
     }
 
     private void initializeUI() {
+        mName = findViewById(R.id.txt_name_signup);
         mEmail = findViewById(R.id.txt_email);
         mPassword = findViewById(R.id.txt_password);
         mSignIn = findViewById(R.id.btn_signUp);
@@ -93,63 +108,78 @@ public class SignUpActivity extends Activity {
 
         if (TextUtils.isEmpty(email)) {
             mEmailWarning.setVisibility(View.VISIBLE);
-        } else if ((TextUtils.isEmpty(password))) {
+        }
+        if ((TextUtils.isEmpty(password))) {
             mPasswordWarning.setVisibility(View.VISIBLE);
-        } else if (password.length() < 8) {
+        }
+        if (password.length() < 8) {
             mPasswordWarning.setVisibility(View.VISIBLE);
-            mPasswordWarning.setText(getString(R.string.signUp_password_warning_two));
-        } else {
+            mPasswordWarning.setText(getString(R.string.password_length_warning));
+        }
 
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            progressBar.setVisibility(View.GONE);
+
+                            mName.setText("");
+                            mEmail.setText("");
+                            mPassword.setText("");
+                            verifyEmail();
+
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            displayToast(SignUpActivity.this, "Authentication failed.");
+                            updateUI(null);
+
+
+                        }
+
+                        // ...
+                    }
+                });
+
+    }
+
+    private void verifyEmail() {
+
+        mAuth = FirebaseAuth.getInstance();
+        final FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            user.sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
+                        public void onComplete(@NonNull Task<Void> task) {
+
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                progressBar.setVisibility(View.GONE);
-                                displayToast(SignUpActivity.this,"createUserWithEmail:success.");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                updateUI(user);
-                                verifyEmail();
+                                Log.d(TAG, "Email sent.");
+
+                                if (user.isEmailVerified()) {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    updateUI(user);
+                                } else {
+                                    displayToast(getApplicationContext(), "Please Check your Email for verification");
+                                }
 
 
                             } else {
-                                // If sign in fails, display a message to the user.
-                                displayToast(SignUpActivity.this,"Authentication failed.");
-                                updateUI(null);
-
-
+                                Log.d(TAG, "Email not sent.");
                             }
-
-                            // ...
                         }
                     });
         }
-    }
 
-    private void verifyEmail(){
-      mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        user.sendEmailVerification()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.v("SignUpActivity", "Email sent.");
-                        }
-                    }
-                });
+
     }
 
     private void updateUI(FirebaseUser user) {
-//        String name=  mName.getText().toString().trim();
-//        String id= user.getUid();
-        if (user != null) {
+
+        if (user != null && user.isEmailVerified()) {
             Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putString("UserId", id);
-//            bundle.putString("UserName", name);
-//            intent.putExtras(bundle);
             startActivity(intent);
             finish();
         }

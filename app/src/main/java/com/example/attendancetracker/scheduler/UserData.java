@@ -7,6 +7,7 @@ public class UserData {
     private Map mArrivalTime;
     private Map mDepartureTime;
     private String mUserId;
+//    private String mName;
 
     public UserData() {
     }
@@ -16,28 +17,38 @@ public class UserData {
         mUserId = userId;
         mArrivalTime = arrivalTime;
         mDepartureTime = departureTime;
+//        mName=name;
     }
-    public String getmUserId() {
+
+//    public String getName() {
+//        return mName;
+//    }
+//
+//    public void setName(String mName) {
+//        this.mName = mName;
+//    }
+
+    public String getUserId() {
         return mUserId;
     }
 
-    public void setmUserId(String mUser) {
+    public void setUserId(String mUser) {
         this.mUserId = mUser;
     }
 
-    public Map getmArrivalTime() {
+    public Map getArrivalTime() {
         return mArrivalTime;
     }
 
-    public void setmArrivalTime(Map mArrivalTime) {
+    public void setArrivalTime(Map mArrivalTime) {
         this.mArrivalTime = mArrivalTime;
     }
 
-    public Map getmDepartureTime() {
+    public Map getDepartureTime() {
         return mDepartureTime;
     }
 
-    public void setmDepartureTime(Map mDepartureTime) {
+    public void setDepartureTime(Map mDepartureTime) {
         this.mDepartureTime = mDepartureTime;
     }
 }
