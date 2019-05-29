@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Attendance Tracker</string>
 
-    <!-- TextViews Text -->
+    <!-- TextViews MainActivity  -->
     <string name="welcome">Welcome</string>
     <string name="checked_in">Checked in:</string>
     <string name="arrived_at">Arrived at:</string>
@@ -9,6 +9,39 @@
     <string name="left_at">Left at:</string>
     <string name="total_working_hours">Total working hours</string>
     <string name="today_s_log">Today\'s Log</string>
-    <string name="connected_to_database">Connected to Database</string>
+    <string name="mainActivity_btn_logout">Logout</string>
+
+
+    <!-- TextViews signUpActivity  -->
+    <string name="signUpActivity_TxtBtn_login">Already registered? Login!</string>
+    <string name="signUpActivity_btn_signIn">Sign In</string>
+    <string name="signUpActivity_name_hint">Enter Name</string>
+
+
+
+
+    <!-- TextViews loginActivity  -->
+    <string name="loginActivity_btn_login">Login</string>
+    <string name="loginActivity_TxtBtn_signUp">New User? Create account!</string>
+
+
+
+
+    <!-- Main Activity/ Toast -->
+    <string name="msg_connected">Connected to Database</string>
+    <string name="msg_disconnected">Disconnected of Database</string>
+    <string name="msg_wifi_closed">Open your WI-FI</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+
+
+
+    <string name="email_password_warning">This field is required!</string>
+
+    <string name="password_length_warning">Password must be at least 8 characters</string>
+    <string name="email_hint">Enter Email</string>
+
+    <string name="password_hint">Enter Password</string>
 
 </resources>

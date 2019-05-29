@@ -15,12 +15,24 @@
       },
       "oauth_client": [
         {
+          "client_id": "955639009608-h56llslupug2e79gg8vb6vboai4lbptm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.attendancetracker",
+            "certificate_hash": "f63f7f0a344133d04096f4820876b26530547e27"
+          }
+        },
+        {
           "client_id": "955639009608-q7lbi51ilt0frcam08epc4jos79vn5it.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.attendancetracker",
             "certificate_hash": "c33550b88f928dd7c9049c85e8154d18b1748f80"
           }
+        },
+        {
+          "client_id": "955639009608-nl06l5nrt29pl2ph71f8isa6q98l9ebd.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [

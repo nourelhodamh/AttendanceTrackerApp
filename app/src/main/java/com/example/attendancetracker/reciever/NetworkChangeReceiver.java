@@ -8,17 +8,16 @@ import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.example.attendancetracker.R;
-import com.example.attendancetracker.UserData;
 import com.google.firebase.database.ServerValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.attendancetracker.Utils.WORK_NETWORK;
+import static com.example.attendancetracker.Utils.displayToast;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
@@ -39,32 +38,30 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
     }
 
-    public NetworkChangeReceiver() {
-
-    }
 
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         isConnectedToRequiredWifi(context);
-        connectionCallback.updateUICallback(isConnectedToRequiredWifi(context), trackingTimeOne());
+        connectionCallback.updateUICallback(isConnectedToRequiredWifi(context));
     }
 
     public int isConnectedToRequiredWifi(Context context) {
         mWifiName = returnWifiName(context).replaceAll("^\"|\"$", "");
+
         if (isOnline(context)) {
             if (check(mWifiName)) {
-                trackingTimeOne();
-                Toast.makeText(context, context.getString(R.string.connected_to_database), Toast.LENGTH_LONG).show();
+                displayToast(context,context.getString(R.string.msg_connected));
                 return 1;
+
             } else if (isOnline(context) && !(check(mWifiName))) {
 
-                Toast.makeText(context, "Disconnected of Database", Toast.LENGTH_LONG).show();
+                displayToast(context,context.getString(R.string.msg_disconnected));
                 return 0;
             }
         } else if (!(isOnline(context))) {
-            Toast.makeText(context, "Open your WI-FI", Toast.LENGTH_LONG).show();
+            displayToast(context,context.getString(R.string.msg_wifi_closed));
             return 2;
         }
         return 2;
@@ -87,6 +84,14 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         return false;
     }
 
+    private String returnWifiName(Context context) {
+        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
+            ssid = wifiInfo.getSSID();
+        }
+        return ssid;
+    }
 
     private boolean check(String mWifiName) {
         if (mWifiName.equals(WORK_NETWORK)) {
@@ -96,14 +101,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         }
     }
 
-    private String returnWifiName(Context context) {
-        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifiInfo = wifiManager.getConnectionInfo();
-        if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
-            ssid = wifiInfo.getSSID();
-        }
-        return ssid;
-    }
+
 
 }
 
