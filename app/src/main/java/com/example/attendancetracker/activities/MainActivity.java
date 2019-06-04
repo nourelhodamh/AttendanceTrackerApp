@@ -1,13 +1,13 @@
 package com.example.attendancetracker.activities;
 
 import android.app.job.JobInfo;
-import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
-import android.app.job.JobService;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -16,12 +16,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.attendancetracker.ClickHandler;
 import com.example.attendancetracker.NetworkConnection;
 import com.example.attendancetracker.R;
+import com.example.attendancetracker.databinding.ActivityMainBinding;
+import com.example.attendancetracker.models.Model;
 import com.example.attendancetracker.reciever.ConnectionCallback;
 import com.example.attendancetracker.reciever.NetworkChangeReceiver;
 import com.example.attendancetracker.scheduler.MJobScheduler;
@@ -32,26 +32,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.example.attendancetracker.Utils.displayToast;
-import static java.text.DateFormat.getDateTimeInstance;
 
 public class MainActivity extends AppCompatActivity implements ConnectionCallback {
 
-    private TextView mDate;
-    private TextView mWifiStatuses;
-    private TextView mCheckedOut;
-    private TextView mCheckedIn;
-    private TextView mLeftAt;
-    private TextView mUserName;
-    private Button mLogoutButton;
 
     private int mConnectedColor;
     private int mDisconnectedColor;
@@ -70,20 +59,36 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private JobInfo jobInfo;
 
     private int mFlag = 2;
-    private int mAsyncFlag;
+
     private FirebaseAuth mAuth;
 
 
     private final String TAG = MainActivity.class.getSimpleName();
 
+    ActivityMainBinding mBinding;
+
+    private Model model;
+    private ClickHandler clickHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        model = new Model();
+        mBinding.setModel(model);
 
-        initializeUI();
+        mBinding.setClickHandler(new ClickHandler(this) {
+            @Override
+            public void onButtonClick(View view) {
+                super.onButtonClick(view);
+                mAuth.getInstance().signOut();
+                stopJobService();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
+
         resources();
         getDate();
 
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         //Network
         networkConnection = new NetworkConnection();
-        mAsyncFlag = networkConnection.networkStatus(this);
+//       int mAsyncFlag = networkConnection.networkStatus(this);
 
         //JobService
         startJobService();
@@ -102,18 +107,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         if (user != null) {
             String uid = user.getUid();
         }
-        mLogoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mAuth.getInstance().signOut();
-                stopJobService();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
-            }
-        });
-
-
     }
 
 
@@ -136,17 +129,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     }
 
-    //TextViews
-    private void initializeUI() {
-
-        mWifiStatuses = findViewById(R.id.text_wifi_status);
-        mCheckedIn = findViewById(R.id.txt_checked_in);
-        mCheckedOut = findViewById(R.id.txt_checked_out);
-        mLeftAt = findViewById(R.id.txt_left_at);
-        mDate = findViewById(R.id.text_date);
-        mLogoutButton = findViewById(R.id.btn_logout);
-        mUserName = findViewById(R.id.text_user_name);
-    }
 
     private void resources() {
         mRes = getResources();
@@ -158,8 +140,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sDfr = new SimpleDateFormat("yyyy. MM. dd ", Locale.getDefault());
         String strDate = sDfr.format(calendar.getTime());
-        mDate.setText(strDate);
-        mDate.setTextColor(Color.BLUE);
+        model.setDate(strDate);
+//        mDate.setTextColor(Color.BLUE);
     }
 
 
@@ -175,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
 //        displayToast(MainActivity.this,"MainActivity-JobScheduler");
-       Log.d("MainActivity", "onCreate: JobScheduler");
+        Log.d("MainActivity", "onCreate: JobScheduler");
     }
 
 
@@ -186,9 +168,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
 
     @Override
-    public void updateUICallback(int works) {
+    public void updateUICallback(int wifiFlag) {
         //createUserData(uTime, uTime);
-        switch (works) {
+        switch (wifiFlag) {
             case 1:
                 updateUI(1);
                 break;
@@ -201,38 +183,36 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             default:
                 Log.v("MainActivity", "\"Callback check: Default\"");
         }
-        Log.d(TAG, "Callback:" + works);
+        Log.d(TAG, "Callback:" + wifiFlag);
 
     }
 
     private void updateUI(int mFlag) {
         switch (mFlag) {
             case 1:
-                mWifiStatuses.setText(getString(R.string.msg_connected));
-                mWifiStatuses.setTextColor(mConnectedColor);
-                mCheckedIn.setText(getString(R.string.yes));
-                mCheckedIn.setTextColor(mConnectedColor);
+                model.setWifiStatus(getString(R.string.msg_connected));
+//                model.setTextColor(mConnectedColor);
+                model.setCheckedInLabel(getString(R.string.yes));
+//                mCheckedIn.setTextColor(mConnectedColor);
                 break;
             case 0:
-                mWifiStatuses.setText(getString(R.string.msg_disconnected));
-                mWifiStatuses.setTextColor(mDisconnectedColor);
-                mCheckedIn.setText(getString(R.string.no));
-                mCheckedIn.setTextColor(mDisconnectedColor);
-                mCheckedOut.setText(getString(R.string.yes));
-                mCheckedOut.setTextColor(mConnectedColor);
+                model.setWifiStatus(getString(R.string.msg_disconnected));
+//                mWifiStatuses.setTextColor(mDisconnectedColor);
+                model.setCheckedInLabel(getString(R.string.no));
+//                mCheckedIn.setTextColor(mDisconnectedColor);
+                model.setCheckedOutLabel(getString(R.string.yes));
+//                mCheckedOut.setTextColor(mConnectedColor);
                 break;
             case 2:
-                mWifiStatuses.setText(getString(R.string.msg_wifi_closed));
-                mWifiStatuses.setTextColor(mDisconnectedColor);
-                mCheckedIn.setText(getString(R.string.no));
-                mCheckedIn.setTextColor(mDisconnectedColor);
-                mCheckedOut.setText(getString(R.string.yes));
-                mCheckedOut.setTextColor(mConnectedColor);
+                model.setWifiStatus(getString(R.string.msg_wifi_closed));
+//                mWifiStatuses.setTextColor(mDisconnectedColor);
+                model.setCheckedInLabel(getString(R.string.no));
+//                mCheckedIn.setTextColor(mDisconnectedColor);
+                model.setCheckedOutLabel(getString(R.string.yes));
+//                mCheckedOut.setTextColor(mConnectedColor);
 
                 break;
-
             default:
-
         }
     }
 
@@ -253,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         @Override
         protected Integer doInBackground(Integer... integers) {
             mFirebaseDatabase = FirebaseDatabase.getInstance();
-            mDatabaseReference = mFirebaseDatabase.getReference("User");
+            mDatabaseReference = mFirebaseDatabase.getReference("Model");
             getTimeStamp();
             createUserData(getUserId(), mMap, mMap);
             return null;

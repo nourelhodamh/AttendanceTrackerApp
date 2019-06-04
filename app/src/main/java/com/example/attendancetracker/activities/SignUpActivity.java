@@ -2,6 +2,7 @@ package com.example.attendancetracker.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -12,7 +13,10 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.attendancetracker.ClickHandler;
 import com.example.attendancetracker.R;
+import com.example.attendancetracker.databinding.ActivitySignUpBinding;
+import com.example.attendancetracker.models.SignUpModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,42 +27,40 @@ import static com.example.attendancetracker.Utils.displayToast;
 
 public class SignUpActivity extends Activity {
     private FirebaseAuth mAuth;
-    private EditText mEmail;
-    private EditText mPassword;
-    private Button mSignIn;
-    private TextView mName;
-    private TextView mLogin;
-    private TextView mEmailWarning;
-    private TextView mPasswordWarning;
-    private ProgressBar progressBar;
     private final String TAG = SignUpActivity.class.getSimpleName();
 
+
+    ActivitySignUpBinding mBinding;
+    SignUpModel signUpModel;
+    ClickHandler clickHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up);
 
-        initializeUI();
         mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null) {
             startActivity(new Intent(SignUpActivity.this, MainActivity.class));
             finish();
         }
+        signUpModel = new SignUpModel();
+        mBinding.setSignUpModel(signUpModel);
 
-        mSignIn.setOnClickListener(new View.OnClickListener() {
+        mBinding.setClickHandler(new ClickHandler(this) {
             @Override
-            public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
+            public void onButtonClick(View view) {
+                super.onButtonClick(view);
+                //progressBar.setVisibility(View.VISIBLE);
                 createAccount();
-
+                Log.v(TAG, "button clicked");
             }
         });
-
-        mLogin.setOnClickListener(new View.OnClickListener() {
+        mBinding.setClickHandler(new ClickHandler(this) {
             @Override
-            public void onClick(View v) {
+            public void onButtonClick(View view) {
+                super.onButtonClick(view);
                 Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
@@ -81,7 +83,7 @@ public class SignUpActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        progressBar.setVisibility(View.GONE);
+//        progressBar.setVisibility(View.GONE);
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null && mAuth.getCurrentUser().isEmailVerified()) {
             updateUI(currentUser);
@@ -90,47 +92,18 @@ public class SignUpActivity extends Activity {
 
     }
 
-    private void initializeUI() {
-        mName = findViewById(R.id.txt_name_signup);
-        mEmail = findViewById(R.id.txt_email);
-        mPassword = findViewById(R.id.txt_password);
-        mSignIn = findViewById(R.id.btn_signUp);
-        mLogin = findViewById(R.id.txt_login);
-        progressBar = findViewById(R.id.progress_Bar);
-        mEmailWarning = findViewById(R.id.txt_email_warning);
-        mPasswordWarning = findViewById(R.id.txt_password_warning);
-    }
-
 
     private void createAccount() {
-        String email = mEmail.getText().toString().trim();
-        String password = mPassword.getText().toString().trim();
-
-        if (TextUtils.isEmpty(email)) {
-            mEmailWarning.setVisibility(View.VISIBLE);
-        }
-        if ((TextUtils.isEmpty(password))) {
-            mPasswordWarning.setVisibility(View.VISIBLE);
-        }
-        if (password.length() < 8) {
-            mPasswordWarning.setVisibility(View.VISIBLE);
-            mPasswordWarning.setText(getString(R.string.password_length_warning));
-        }
-
-        mAuth.createUserWithEmailAndPassword(email, password)
+        mAuth.createUserWithEmailAndPassword(signUpModel.getEmail(), signUpModel.getPassword())
                 .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            progressBar.setVisibility(View.GONE);
-
-                            mName.setText("");
-                            mEmail.setText("");
-                            mPassword.setText("");
+//                          progressBar.setVisibility(View.GONE);
+                            signUpModel.setName("");
+                            signUpModel.setEmail("");
+                            signUpModel.setPassword("");
                             verifyEmail();
-
-
                         } else {
                             // If sign in fails, display a message to the user.
                             displayToast(SignUpActivity.this, "Authentication failed.");
@@ -164,8 +137,6 @@ public class SignUpActivity extends Activity {
                                 } else {
                                     displayToast(getApplicationContext(), "Please Check your Email for verification");
                                 }
-
-
                             } else {
                                 Log.d(TAG, "Email not sent.");
                             }
